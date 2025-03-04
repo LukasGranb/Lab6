@@ -13,6 +13,7 @@ public abstract class SimState extends Observable {
 
     public SimState() {
         super();
+        this.state = State.START;
 
     }
 }
