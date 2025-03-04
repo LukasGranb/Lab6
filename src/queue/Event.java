@@ -1,4 +1,4 @@
-package sim.EvQ;
+package src.queue;
 
 public class Event {
 }

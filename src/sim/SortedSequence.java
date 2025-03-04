@@ -1,4 +1,4 @@
-package sim;
+package src.sim;
 
 public class SortedSequence {
 }

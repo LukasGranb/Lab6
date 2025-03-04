@@ -1,4 +1,4 @@
-package sim.state;
+package src.state;
 
 public class CarWashState {
 }
