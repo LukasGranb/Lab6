@@ -1,3 +1,5 @@
 package src.sim;
 
-publict class SimState {}
+publict class SimState {
+
+}
