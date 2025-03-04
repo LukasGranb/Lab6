@@ -1,6 +1,8 @@
 package src.sim;
 
-public abstract class SimState {
+import java.util.Observable;
+
+public abstract class SimState extends Observable {
 
     private enum State {
         START,
@@ -10,7 +12,8 @@ public abstract class SimState {
     private State state;
 
     public SimState() {
-
+        super();
+        this.state = State.START;
 
     }
 }

@@ -1,5 +1,8 @@
 package src.sim;
 
-public class SimView {
+import java.util.Observer;
 
+public abstract class SimView implements Observer {
+
+    public abstract void output();
 }
