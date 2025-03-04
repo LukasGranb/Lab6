@@ -1,6 +1,6 @@
 package src.sim;
 
-publict abstract class SimState {
+public abstract class SimState {
 
     private enum State {
         START,
