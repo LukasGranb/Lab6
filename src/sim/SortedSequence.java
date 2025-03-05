@@ -8,8 +8,9 @@ public class SortedSequence implements Queue{
 
     //Sorts list after time and returns an array list.
     public ArrayList<> sorter() {
+        ArrayList<> temp;
         while (!queue.isEmpty()) {
-            queue.poll();
+            temp.add(queue.poll());
         }
     }
 }
