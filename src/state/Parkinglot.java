@@ -8,16 +8,16 @@ public class Parkinglot extends SimState{
         queue = this.queue;
     }
 
-    public carLeavesQueue() {
+    public void carLeavesQueue() {
         this.queue++;
     }
 
-    public carArrivesQueue() {
+    public void carArrivesQueue() {
         this.queue--;
     }
     //----------- GETTER -----------
     public int getQueue(){
-        return this.queue
+        return this.queue;
     }
 
 }
