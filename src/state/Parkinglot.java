@@ -6,24 +6,16 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 public class Parkinglot {
 
-    private int parkingLotSize;
-    private ArrayBlockingQueue<e> parkinglot;
+    private ArrayBlockingQueue<Object> parkinglot;
 
 
     public Parkinglot(int size) {
-        this.parkingLotSize = size;
+        this.parkinglot = new ArrayBlockingQueue<Object>(size);
     }
 
-    public void carLeavesQueue() {
-        this.queue++;
-    }
+    public boolean addCar(Object car) {
 
-    public void carArrivesQueue() {
-        this.queue--;
-    }
-    //----------- GETTER -----------
-    public int getQueue(){
-        return this.queue;
+
     }
 
 }
