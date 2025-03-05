@@ -8,4 +8,8 @@ public class Car {
         this.id = nextId;
         nextId ++;
     }
+
+    public int getCarId(){
+        return id;
+    }
 }

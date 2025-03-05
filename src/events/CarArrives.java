@@ -9,10 +9,11 @@ import java.util.Random;
 
 public class CarArrives extends Event {
 
-    private Car car;
     private Random random;
+    private double time;
+    private Car car;
 
-    public CarArrives(double time, Car car) {
+    public CarArrives(double time, int id) {
         time = this.random;
         this.random = new Random();
     }

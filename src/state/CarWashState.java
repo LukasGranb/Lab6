@@ -21,28 +21,28 @@ public class CarWashState extends SimState {
     }
 
 
-    public void carLeavesFastMachines() {
+    public static void carLeavesFastMachines() {
         this.fastMachines++;
     }
 
-    public void carArrivesFastMachines() {
+    public static void carArrivesFastMachines() {
         this.fastMachines--;
     }
 
-    public void carLeavesSlowMachines() {
+    public static void carLeavesSlowMachines() {
         this.slowMachines++;
     }
 
-    public void carArrivesSlowMachins() {
+    public static void carArrivesSlowMachins() {
         this.slowMachines--;
     }
 
     //------- Getters --------
-    public int getFastMachines() {
+    public static int getFastMachines() {
         return this.fastMachines;
     }
 
-    public int getSlowMachines() {
+    public static int getSlowMachines() {
         return this.slowMachines;
     }
 }
