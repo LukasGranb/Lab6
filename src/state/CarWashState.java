@@ -1,6 +1,8 @@
 package src.state;
 
-public class CarWashState {
+import src.sim.SimState
+
+public class CarWashState extends SimState {
     private int fastMachines;
     private int slowMachines;
 
