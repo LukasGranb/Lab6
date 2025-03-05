@@ -4,7 +4,7 @@ import src.events.CarArrives;
 import src.events.CarLeaves;
 
 import java.util.Random;
-
+a
 public abstract class Event {
     private Random time;
 
