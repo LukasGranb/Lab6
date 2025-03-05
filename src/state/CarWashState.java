@@ -7,6 +7,7 @@ public class CarWashState extends SimState {
     private int fastMachines;
     private int slowMachines;
     private int parkingLotSize;
+    private int rejected;
 
     public CarWashState(int fastMachines, int slowMachines, int parkingLotSize, double time, SimView view) {
         super(time, view);
@@ -14,6 +15,11 @@ public class CarWashState extends SimState {
         this.slowMachines = slowMachines;
         this.parkingLotSize = parkingLotSize;
     }
+
+    public void rejected() {
+        this.rejected++;
+    }
+
 
     public void carLeavesFastMachines() {
         this.fastMachines++;

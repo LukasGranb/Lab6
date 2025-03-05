@@ -1,13 +1,11 @@
 package src.events;
 
 public class Car {
+    private static int nextId = 1;
     private int id;
 
-    private void Car(int id){
-        this.id = id;
-    }
-
-    public int getCarId(){
-        return this.id;
+    public Car(){
+        this.id = nextId;
+        nextId ++;
     }
 }
