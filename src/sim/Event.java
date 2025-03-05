@@ -6,12 +6,11 @@ import src.events.CarLeaves;
 import java.util.Random;
 
 public abstract class Event {
-    private Random time;
-    public Event(Random time) {
+    private double time;
+
+    public Event(double time) {
         this.time = time;
     }
 
-    public void execute(){
-
-    }
+    public abstract void execute();
 }

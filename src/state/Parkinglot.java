@@ -1,11 +1,17 @@
 package src.state;
-import src.sim.SimState;
 
-public class Parkinglot extends SimState{
-    private int queue;
+import src.events.Car;
 
-    public Parkinglot(int queue){
-        queue = this.queue;
+import java.util.concurrent.ArrayBlockingQueue;
+
+public class Parkinglot {
+
+    private int parkingLotSize;
+    private ArrayBlockingQueue<e> parkinglot;
+
+
+    public Parkinglot(int size) {
+        this.parkingLotSize = size;
     }
 
     public void carLeavesQueue() {

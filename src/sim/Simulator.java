@@ -6,8 +6,12 @@ public class Simulator {
     private EventQueue eventQueue;
     private SimView view;
 
-    public Simulator(SimState state, EventQueue eventQueue, SimView view) {
+    public Simulator() {
 
+
+    }
+
+    public void run(SimState state, EventQueue eventQueue, SimView view) {
         this.state = state;
         this.eventQueue = eventQueue;
         this.view = view;
