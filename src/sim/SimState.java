@@ -10,10 +10,13 @@ public abstract class SimState extends Observable {
     }
 
     private State state;
+    private double currentTime;
 
-    public SimState() {
+    public SimState(double time, SimView view) {
         super();
+        this.currentTime = time;
         this.state = State.START;
 
+        this.addObserver(view);
     }
 }
