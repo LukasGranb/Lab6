@@ -20,19 +20,8 @@ public class CarArrives extends Event {
 
     public void executeCarArrives() {
         Car car = new Car();
-        // Check conditions for fast machines
-        if (CarWashState.getFastMachines() != 0) {
-            CarWashState.carArrivesFastMachines();
-            CarLeaves(time, fast);
-            return;
-        }
 
-        // Check conditions for slow machines
-        if (CarWashState.getSlowMachines() != 0) {
-            CarWashState.carArrivesSlowMachines();
-            CarLeaves(time, slow)
-            return;
-        }
+        fastOrSlowMachine();
 
         // Check conditions for queue
         if (CarWashState.getQueue() != 0) {
@@ -44,5 +33,21 @@ public class CarArrives extends Event {
         // If all other options fail, reject the car
         CarWashState.rejected();
     }
+
+    public void fastOrSlowMachine() {
+        // Check conditions for fast machines
+        if (CarWashState.getFastMachines() != 0) {
+            CarWashState.carArrivesFastMachines();
+            CarLeaves(time, fast);
+            return;
+        }
+
+        // Check conditions for slow machines
+        if (CarWashState.getSlowMachines() != 0) {
+            CarWashState.carArrivesSlowMachines();
+            CarLeaves(time, slow);
+            return;
+        }
     }
+
 }
