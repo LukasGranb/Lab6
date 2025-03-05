@@ -39,4 +39,7 @@ public class CarWashState extends SimState {
     public int getSlowMachines() {
         return this.slowMachines;
     }
+
+
+
 }

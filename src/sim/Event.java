@@ -6,6 +6,7 @@ import src.events.CarLeaves;
 import java.util.Random;
 
 public abstract class Event implements Comparable<Event> {
+
     private double time;
 
     public Event(double time) {
