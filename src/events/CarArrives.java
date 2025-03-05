@@ -15,5 +15,4 @@ public class CarArrives extends Event {
         id = Car.getCarId(this.car);
     }
 
-    
 }

@@ -4,13 +4,14 @@ import java.util.*;
 
 public class SortedSequence implements Queue{
 
-    Queue<> queue = new PriorityQueue<>();
+    private PriorityQueue<> queue = new PriorityQueue<>();
 
     //Sorts list after time and returns an array list.
     public ArrayList<> sorter() {
-        ArrayList<> temp;
+        ArrayList<> sortedList = new ArrayList<>();
         while (!queue.isEmpty()) {
-            temp.add(queue.poll());
+            sortedList.add(queue.poll());
         }
+        retrun sortedList;
     }
 }
