@@ -4,7 +4,7 @@ import src.sim.SimState;
 public class Parkinglot extends SimState{
     private int queue;
 
-    public SimState(int queue){
+    public Parkinglot(int queue){
         queue = this.queue;
     }
 
