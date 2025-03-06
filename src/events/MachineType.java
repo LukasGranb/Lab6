@@ -1,7 +1,7 @@
 package src.events;
 
 public enum MachineType {
-    FAST(1);
+    FAST(1),
     SLOW(2);
 
     private final int value;

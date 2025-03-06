@@ -1,51 +1,53 @@
 package src.events;
 
 import src.sim.Event;
+import src.sim.EventQueue;
 import src.state.CarWashState;
 import src.events.Car;
-
-import java.util.Random;
 
 
 public class CarArrives extends Event {
 
-    private Random random;
-    private double time;
     private Car car;
+    private CarWashState state;
+    private EventQueue eventQueue;
+    private double time;
 
-    public CarArrives(double time) {
+    public CarArrives(CarWashState state, EventQueue queue, double time) {
+
+        this.state = state;
+        this.eventQueue = queue;
         this.time = time;
-        this.random = new Random();
+        this.car = new Car(this.state.idCounter());
+    }
+    @Override
+    public double time() {
+        return this.time;
     }
 
-    public void executeCarArrives() {
-        Car car = new Car();
-
+    @Override
+    public void execute() {
         fastOrSlowMachine();
 
-        // Check conditions for queue
-        if (CarWashState.getQueue() != 0) {
-            CarWashState.carArrivesQueue();
+        if (this.state.getQueue() != 0) {
+            this.state.carArrivesQueue();
             return;
-        }
 
-        // If all other options fail, reject the car
-        CarWashState.rejected();
+        }
+        this.state.rejected();
+
     }
 
     public void fastOrSlowMachine() {
-        // Check conditions for fast machines
-        if (CarWashState.getFastMachines() != 0) {
-            CarWashState.carArrivesFastMachines();
-            new CarLeaves(this.time, MachineType.FAST, car.getID());
+        if (this.state.getFastMachines() != 0) {
+            this.state.carArrivesFastMachines();
+            new CarLeaves(time(), MachineType.FAST, car.getCarId());
             return;
         }
 
-        // Check conditions for slow machines
-        if (CarWashState.getSlowMachines() != 0) {
-            CarWashState.carArrivesSlowMachines();
-            new CarLeaves(this.time, MachineType.SLOW, car.getID());
-            return;
+        if (state.getSlowMachines() != 0) {
+            state.carArrivesSlowMachines();
+            new CarLeaves(time(), MachineType.SLOW, car.getCarId());
         }
     }
 

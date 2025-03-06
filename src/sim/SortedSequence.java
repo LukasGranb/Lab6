@@ -2,16 +2,19 @@ package src.sim;
 
 import java.util.*;
 
-public class SortedSequence implements Queue{
+public class SortedSequence {
 
-    private PriorityQueue<> queue = new PriorityQueue<>();
+    private PriorityQueue<Event> sorted;
 
-    //Sorts list after time and returns an array list.
-    public ArrayList<> sorter() {
-        ArrayList<> sortedList = new ArrayList<>();
-        while (!queue.isEmpty()) {
-            sortedList.add(queue.poll());
-        }
-        return sortedList;
+    public SortedSequence() {
+        sorted = new PriorityQueue<Event>();
+    }
+
+    public void add(Event e) {
+        sorted.add(e);
+    }
+
+    public Event get() {
+        return sorted.poll();
     }
 }

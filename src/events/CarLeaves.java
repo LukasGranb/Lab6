@@ -1,55 +1,52 @@
 package src.events;
 
+import src.random.UniformRandomStream;
 import src.sim.Event;
+import src.sim.EventQueue;
+import src.sim.SimState;
 import src.state.CarWashState;
 
-public class CarLeaves {
-    private static final Random random = new Random();
+public class CarLeaves extends Event {
+    private static final UniformRandomStream fastMachineTime = new UniformRandomStream(2.0, 4.0);
+    private static final UniformRandomStream slowMachineTime = new UniformRandomStream(4.0, 8.0);
+
     private int carId;
-    private double time;
     private MachineType machineType;
 
-    public CarLeaves(double timeEntered, MachineType machineType, int carId){
+    public CarLeaves(double timeEntered, MachineType machineType, int carId) {
+        // Calculate the departure time when creating the event
+        super(timeEntered + getServiceTime(machineType));
         this.machineType = machineType;
         this.carId = carId;
-
-        this.time = time + machineType
     }
 
     /**
      * Calculates a random service time based on what machines it gets into
+     *
      * @param machineType
      * @return time between 2-4
-     * @retrun time between 4-8
+     * @return time between 4-8
      */
 
-    private double getServiceTime(MachineType machineType){
+    private static double getServiceTime(MachineType machineType) {
         if (machineType == MachineType.FAST) {
-            return 2.0 + (random.nextDouble() * 2.0);
+            return fastMachineTime.next();
         } else {
-            return 4.0 + (random.nextDouble() * 4.0);
+            return slowMachineTime.next();
         }
     }
 
-    pubnlic double getTime() {
-        return this.time;
-    }
-
-    public void executeCarLeaves() {
+    public void execute(SimState simState, EventQueue queue) {
         if (machineType == MachineType.FAST) {
-            CarWashState.carleavesFastMachine();
+            state.carLeavesFastMachine();
+        } else if (machineType == MachineType.SLOW) {
+            state.carLeavesSlowMachine();
         }
-        else if (machineType == MachineType.SLOW) {
-            CarWashState.carLeavesSlowMachine();
-        }
-
-        if (CarWashState.getQueueSize() > 0) {
-            Car nextCar = CarWashState.processNextFromQueue();
+        if (state.getQueueSize() > 0) {
             if (nextCar != null) {
-                // Determine which machine type became available
-                new CarLeaves(time, Car.getId(), machineType);
+                MachineType nextMachineType = state.getLastUsedMachineType();
+                queue.add(new CarLeaves(getTime(), nextMachineType, nextCar.getCarId()));
             }
         }
     }
-
 }

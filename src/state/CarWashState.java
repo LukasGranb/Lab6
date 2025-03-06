@@ -12,6 +12,7 @@ public class CarWashState extends SimState {
     private int parkingLotSize;
     private int rejected;
     private Queue<Car> carQueue;
+    private int carNextId = 1;
 
 
     public CarWashState(int fastMachines, int slowMachines, int parkingLotSize, double time, SimView view) {
@@ -23,6 +24,12 @@ public class CarWashState extends SimState {
         this.carQueue = new LinkedList<>();
     }
 
+    public int idCounter(){
+        int carId = this.carNextId;
+        this.carNextId++;
+        return carId;
+    }
+
     public void rejected() {
         this.rejected++;
     }
@@ -30,15 +37,12 @@ public class CarWashState extends SimState {
     public void carLeavesFastMachines() {
         this.fastMachines++;
     }
-
     public void carArrivesFastMachines() {
         this.fastMachines--;
     }
-
     public void carLeavesSlowMachines() {
         this.slowMachines++;
     }
-
     public void carArrivesSlowMachines() {
         this.slowMachines--;
     }
@@ -47,12 +51,24 @@ public class CarWashState extends SimState {
      * Adds a car to the parking lot queue
      */
 
-    public void carArrivesQueue() {
+    public void carArrivesQueue(Car car) {
             carQueue.add(car);
     }
 
     public Car processNextFromQueue() {
-        return carQueue.poll();
+        if (carQueue.isEmpty()) {
+            return null;
+        }
+        Car nextCar = carQueue.poll();
+        if (fastMachines > 0) {
+            carArrivesFastMachines();
+            return nextCar;
+        } else if (slowMachines > 0) {
+            carArrivesSlowMachines();
+            return nextCar;
+        } else {
+            return null;
+        }
     }
 
     //------- Getters --------
