@@ -45,12 +45,11 @@ public class CarWashState extends SimState {
 
     /**
      * Adds a car to the parking lot queue
-     * @return
      */
 
     public void carArrivesQueue() {
         if (getQueue() > 0) {
-            Car car = new Car(nextCarId++);
+            Car car = new Car();
             carQueue.add(car);
         }
     }
@@ -72,19 +71,19 @@ public class CarWashState extends SimState {
 
     //------- Getters --------
 
-    public static int getQueue() {
+    public int getQueue() {
         return this.parkingLotSize - carQueue.size();
     }
 
-    public static int getQueueSize(){
+    public int getQueueSize(){
         return carQueue.size();
     }
 
-    public static int getFastMachines() {
+    public int getFastMachines() {
         return this.fastMachines;
     }
 
-    public static int getSlowMachines() {
+    public int getSlowMachines() {
         return this.slowMachines;
     }
 
