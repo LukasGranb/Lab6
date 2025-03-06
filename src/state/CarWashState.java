@@ -2,6 +2,9 @@ package src.state;
 
 import src.sim.SimState;
 import src.sim.SimView;
+import src.events.Car;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class CarWashState extends SimState {
     private int fastMachines;
@@ -24,19 +27,19 @@ public class CarWashState extends SimState {
         this.rejected++;
     }
 
-    public static void carLeavesFastMachines() {
+    public void carLeavesFastMachines() {
         this.fastMachines++;
     }
 
-    public static void carArrivesFastMachines() {
+    public void carArrivesFastMachines() {
         this.fastMachines--;
     }
 
-    public static void carLeavesSlowMachines() {
+    public void carLeavesSlowMachines() {
         this.slowMachines++;
     }
 
-    public static void carArrivesSlowMachins() {
+    public void carArrivesSlowMachins() {
         this.slowMachines--;
     }
 
@@ -69,11 +72,11 @@ public class CarWashState extends SimState {
 
     //------- Getters --------
 
-    public int getQueue() {
+    public static int getQueue() {
         return this.parkingLotSize - carQueue.size();
     }
 
-    public int getQueueSize(){
+    public static int getQueueSize(){
         return carQueue.size();
     }
 
