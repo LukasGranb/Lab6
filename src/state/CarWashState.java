@@ -61,7 +61,7 @@ public class CarWashState extends SimState {
 
     public Car processNextFromQueue() {
         if (carQueue.isEmpty()) {
-            return null;
+            return null;ggVG
         }
 
         Car nextCar = carQueue.poll();

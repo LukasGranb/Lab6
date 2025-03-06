@@ -37,14 +37,14 @@ public class CarArrives extends Event {
         // Check conditions for fast machines
         if (CarWashState.getFastMachines() != 0) {
             CarWashState.carArrivesFastMachines();
-            CarLeaves(this.time, MachineType.FAST, car.getID());
+            new CarLeaves(this.time, MachineType.FAST, car.getID());
             return;
         }
 
         // Check conditions for slow machines
         if (CarWashState.getSlowMachines() != 0) {
             CarWashState.carArrivesSlowMachines();
-            CarLeaves(this.time, MachineType.SLOW, car.getID());
+            new CarLeaves(this.time, MachineType.SLOW, car.getID());
             return;
         }
     }
