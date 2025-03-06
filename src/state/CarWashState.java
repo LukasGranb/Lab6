@@ -12,7 +12,6 @@ public class CarWashState extends SimState {
     private int parkingLotSize;
     private int rejected;
     private Queue<Car> carQueue;
-    private int nexCarId = 1;
 
 
     public CarWashState(int fastMachines, int slowMachines, int parkingLotSize, double time, SimView view) {
