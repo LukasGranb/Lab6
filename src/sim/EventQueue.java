@@ -14,7 +14,7 @@ public class EventQueue {
         Event e = this.sorter.get();
 
         if(e != null) {
-            e.execute(this.state, this);
+            e.execute();
         }
         else {
             state.setState(SimState.State.STOP);
