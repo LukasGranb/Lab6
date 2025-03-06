@@ -26,7 +26,6 @@ public class CarArrives extends Event {
         // Check conditions for queue
         if (CarWashState.getQueue() != 0) {
             CarWashState.carArrivesQueue();
-            CarWashState()
             return;
         }
 
