@@ -20,6 +20,7 @@ public class CarWashState extends SimState {
         this.slowMachines = slowMachines;
         this.parkingLotSize = parkingLotSize;
         this.rejected = 0;
+        this.carQueue = new LinkedList<>();
     }
 
     public void rejected() {
@@ -38,7 +39,7 @@ public class CarWashState extends SimState {
         this.slowMachines++;
     }
 
-    public void carArrivesSlowMachins() {
+    public void carArrivesSlowMachines() {
         this.slowMachines--;
     }
 
@@ -47,25 +48,11 @@ public class CarWashState extends SimState {
      */
 
     public void carArrivesQueue() {
-        if (getQueue() > 0) {
-            Car car = new Car();
             carQueue.add(car);
-        }
     }
 
-    /**
-     * Process the next car from the queue and assign it to a machine
-     * @return The Car objext that was processed, or null if the queue is empty
-     */
-
     public Car processNextFromQueue() {
-        if (carQueue.isEmpty()) {
-            return null;ggVG
-        }
-
-        Car nextCar = carQueue.poll();
-
-        return nextCar;
+        return carQueue.poll();
     }
 
     //------- Getters --------
