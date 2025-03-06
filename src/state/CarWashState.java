@@ -48,7 +48,7 @@ public class CarWashState extends SimState {
     public void carArrivesQueue() {
         if (getQueue() > 0) {
             Car car = new Car(nextCarId++);
-            varQueue.add(car);
+            carQueue.add(car);
         }
     }
 
@@ -73,7 +73,7 @@ public class CarWashState extends SimState {
         return this.parkingLotSize - carQueue.size();
     }
 
-    public int getQueue.size(){
+    public int getQueueSize(){
         return carQueue.size();
     }
 
