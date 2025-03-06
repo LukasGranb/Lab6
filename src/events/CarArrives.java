@@ -13,8 +13,8 @@ public class CarArrives extends Event {
     private double time;
     private Car car;
 
-    public CarArrives(double time, int id) {
-        time = this.random;
+    public CarArrives(double time) {
+        this.time = time;
         this.random = new Random();
     }
 
@@ -26,7 +26,7 @@ public class CarArrives extends Event {
         // Check conditions for queue
         if (CarWashState.getQueue() != 0) {
             CarWashState.carArrivesQueue();
-
+            CarWashState()
             return;
         }
 
@@ -38,14 +38,14 @@ public class CarArrives extends Event {
         // Check conditions for fast machines
         if (CarWashState.getFastMachines() != 0) {
             CarWashState.carArrivesFastMachines();
-            CarLeaves(time, fast);
+            CarLeaves(this.time, MachineType.FAST, car.getID());
             return;
         }
 
         // Check conditions for slow machines
         if (CarWashState.getSlowMachines() != 0) {
             CarWashState.carArrivesSlowMachines();
-            CarLeaves(time, slow);
+            CarLeaves(this.time, MachineType.SLOW, car.getID());
             return;
         }
     }
