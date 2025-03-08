@@ -1,5 +1,7 @@
 package src.sim;
 
+import src.random.ExponentialRandomStream;
+
 public class EventQueue {
 
     private SimState state;
@@ -23,6 +25,17 @@ public class EventQueue {
 
     public void addEvent(Event e) {
         this.sorter.add(e);
+    }
+
+    private void generateEvents(double lambda, double eventSize) {
+
+        ExponentialRandomStream stream = new ExponentialRandomStream(lambda);
+
+        for(int i = 0; i < eventSize; i++) {
+
+            this.addEvent(new Event(this.state, this, stream.next()) {
+            });
+        }
     }
 
 }
