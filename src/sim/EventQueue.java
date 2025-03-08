@@ -27,7 +27,7 @@ public class EventQueue {
         this.sorter.add(e);
     }
 
-    private void generateEvents(double lambda, double eventSize) {
+    private void generateEvents(Function<Double, Event<S>> eventSupplier, double lambda, double eventSize) {
 
         ExponentialRandomStream stream = new ExponentialRandomStream(lambda);
 

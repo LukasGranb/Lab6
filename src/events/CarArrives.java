@@ -18,11 +18,8 @@ public class CarArrives extends Event<CarWashState> {
     }
 
     @Override
-    public void execute(CarWashState state, EventQueue queue) {
+    public void execute() {
 
-        this.state = state;
-        this.eventQueue = queue;
-        this.car = new Car(this.state.idCounter());
 
         fastOrSlowMachine();
 

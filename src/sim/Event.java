@@ -5,6 +5,8 @@ import src.random.ExponentialRandomStream;
 public abstract class Event<S extends SimState> implements Comparable<Event<S>> {
 
     private double time;
+    private S state;
+    private EventQueue eventQueue;
 
     public Event(S state, EventQueue queue, double time) {
         this.time = time;
