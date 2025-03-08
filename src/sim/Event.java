@@ -10,9 +10,12 @@ public abstract class Event<S extends SimState> implements Comparable<Event<S>> 
 
     public Event(S state, EventQueue queue, double time) {
         this.time = time;
+        this.state = state;
+        this.eventQueue = queue;
+
     }
 
-    public abstract void execute(S state, EventQueue queue);
+    public abstract void execute();
 
     public double getTime() {
         return this.time;

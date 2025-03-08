@@ -1,13 +1,13 @@
 package src.sim;
 
 import src.random.ExponentialRandomStream;
+import java.util.function.Function;
+public class EventQueue<S extends SimState> {
 
-public class EventQueue {
-
-    private SimState state;
+    private S state;
     private SortedSequence sorter;
 
-    public EventQueue(SimState state) {
+    public EventQueue(S state) {
         this.state = state;
         this.sorter = new SortedSequence();
     }
@@ -32,9 +32,10 @@ public class EventQueue {
         ExponentialRandomStream stream = new ExponentialRandomStream(lambda);
 
         for(int i = 0; i < eventSize; i++) {
+            double eventTime = stream.next();
+            Event<S> e = eventSupplier.apply(eventTime);
+            this.addEvent(e);
 
-            this.addEvent(new Event(this.state, this, stream.next()) {
-            });
         }
     }
 

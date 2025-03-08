@@ -11,10 +11,13 @@ public class CarArrives extends Event<CarWashState> {
     private Car car;
     private CarWashState state;
     private EventQueue eventQueue;
-    private double time;
 
-    public CarArrives(double time) {
-        super(time);
+
+    public CarArrives(CarWashState state, EventQueue eventQueue, double time) {
+        super(state, eventQueue, time);
+        this.car = new Car(this.state.idCounter());
+        this.state = state;
+        this.eventQueue = eventQueue;
     }
 
     @Override
@@ -24,7 +27,7 @@ public class CarArrives extends Event<CarWashState> {
         fastOrSlowMachine();
 
         if (this.state.getQueue() != 0) {
-            this.state.carArrivesQueue();
+            this.state.carArrivesQueue(this.car);
             return;
 
         }
@@ -35,13 +38,13 @@ public class CarArrives extends Event<CarWashState> {
     public void fastOrSlowMachine() {
         if (this.state.getFastMachines() != 0) {
             this.state.carArrivesFastMachines();
-            new CarLeaves(time(), MachineType.FAST, car.getCarId());
+            new CarLeaves(this.getTime(), MachineType.FAST, car.getCarId());
             return;
         }
 
         if (state.getSlowMachines() != 0) {
             state.carArrivesSlowMachines();
-            new CarLeaves(time(), MachineType.SLOW, car.getCarId());
+            new CarLeaves(this.getTime(), MachineType.SLOW, car.getCarId());
         }
     }
 
