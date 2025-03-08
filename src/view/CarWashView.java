@@ -1,6 +1,7 @@
 package src.view;
 
 import src.events.CarArrives;
+import src.events.CarLeaves;
 import src.events.MachineType;
 import src.sim.SimView;
 import src.state.CarWashState;
@@ -34,7 +35,20 @@ public class CarWashView extends SimView {
             // hur ska man göra typ detta-> double currentTime = carArrives.getTime();
             //int carID = carArrives.getCarId();
             int fastMachines = carWashState.getFastMachines();
-            int slow
+            int slowMachines = carWashState.getSlowMachines();
+            //double idleTime = carWashState.getIdleTime();
+            //double queueTime = carWashState.getQueueTime();
+            int queueSize = carWashState.getQueueSize();
+            int rejected = carWashState.getRejected();
+
+            String output = String.format(
+                    "%-10.2f %-10s",
+                    currentTime, "Arrive " + carId, FastMachines...
+            );
+            System.out.print(output);
+        } else if(arg instanceof CarLeaves){
+            CarLeaves carLeavesEvent = (CarLeaves) arg;
+            //blir detta fucked? jag vill ju bara ha en print av (output).. Man måste nog göra så att
         }
 
     }
