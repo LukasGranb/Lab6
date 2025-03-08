@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class CarWashState extends SimState {
+
+
     private int fastMachines;
     private int slowMachines;
     private int parkingLotSize;
@@ -69,6 +71,10 @@ public class CarWashState extends SimState {
         } else {
             return null;
         }
+    }
+
+    public double advanceTime(double time) {
+        return time;
     }
 
     //------- Getters --------

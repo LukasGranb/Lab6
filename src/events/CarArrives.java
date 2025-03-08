@@ -3,30 +3,27 @@ package src.events;
 import src.sim.Event;
 import src.sim.EventQueue;
 import src.state.CarWashState;
-import src.events.Car;
 
 
-public class CarArrives extends Event {
+
+public class CarArrives extends Event<CarWashState> {
 
     private Car car;
     private CarWashState state;
     private EventQueue eventQueue;
     private double time;
 
-    public CarArrives(CarWashState state, EventQueue queue, double time) {
+    public CarArrives(double time) {
+        super(time);
+    }
+
+    @Override
+    public void execute(CarWashState state, EventQueue queue) {
 
         this.state = state;
         this.eventQueue = queue;
-        this.time = time;
         this.car = new Car(this.state.idCounter());
-    }
-    @Override
-    public double time() {
-        return this.time;
-    }
 
-    @Override
-    public void execute() {
         fastOrSlowMachine();
 
         if (this.state.getQueue() != 0) {

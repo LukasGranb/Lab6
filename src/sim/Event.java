@@ -1,15 +1,23 @@
 package src.sim;
 
-public abstract class Event implements Comparable<Event> {
+import src.random.ExponentialRandomStream;
 
-    public Event(SimState state, EventQueue queue, double time) {}
+public abstract class Event<S extends SimState> implements Comparable<Event<S>> {
 
-    public abstract void execute();
+    private double time;
 
-    public abstract double time();
+    public Event(S state, EventQueue queue, double time) {
+        this.time = time;
+    }
+
+    public abstract void execute(S state, EventQueue queue);
+
+    public double getTime() {
+        return this.time;
+    }
 
     @Override
-    public int compareTo(Event other) {
-        return Double.compare(this.time(), other.time());
+    public int compareTo(Event<S> other) {
+        return Double.compare(this.time, other.time);
     }
 }
