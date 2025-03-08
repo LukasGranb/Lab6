@@ -32,19 +32,35 @@ public class CarArrives extends Event<CarWashState> {
 
         }
         this.state.rejected();
+        //Tror man behöver göra något sånt här, denna syntax är såklart ej korrekt..
+        // CarWashState.currentTime(this.getTime?) eller bara  = this.getTime();
 
     }
+    // ORIGINALET
+//    public void fastOrSlowMachine() {
+//        if (this.state.getFastMachines() != 0) {
+//            this.state.carArrivesFastMachines();
+//            new CarLeaves(this.getTime(), MachineType.FAST, car.getCarId());
+//            return;
+//        }
+//
+//        if (state.getSlowMachines() != 0) {
+//            state.carArrivesSlowMachines();
+//            new CarLeaves(this.getTime(), MachineType.SLOW, car.getCarId());
+//        }
+//    }
 
+    //Antons variant >(
     public void fastOrSlowMachine() {
         if (this.state.getFastMachines() != 0) {
             this.state.carArrivesFastMachines();
-            new CarLeaves(this.getTime(), MachineType.FAST, car.getCarId());
+            new CarLeaves(this.state, this.eventQueue, this.getTime(), MachineType.FAST, car.getCarId());
             return;
         }
 
         if (state.getSlowMachines() != 0) {
             state.carArrivesSlowMachines();
-            new CarLeaves(this.getTime(), MachineType.SLOW, car.getCarId());
+            new CarLeaves(this.state, this.eventQueue, this.getTime(), MachineType.SLOW, car.getCarId());
         }
     }
 

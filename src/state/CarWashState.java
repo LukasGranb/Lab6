@@ -15,6 +15,8 @@ public class CarWashState extends SimState {
     private int rejected;
     private Queue<Car> carQueue;
     private int carNextId = 1;
+    //Think we need this aswell if i understood instructions correct.
+    private int currentTime;
 
 
     public CarWashState(int fastMachines, int slowMachines, int parkingLotSize, double time, SimView view) {
@@ -24,6 +26,7 @@ public class CarWashState extends SimState {
         this.parkingLotSize = parkingLotSize;
         this.rejected = 0;
         this.carQueue = new LinkedList<>();
+        this.currentTime = currentTime;
     }
 
     public int idCounter(){
@@ -31,6 +34,11 @@ public class CarWashState extends SimState {
         this.carNextId++;
         return carId;
     }
+
+    //guess we should have this too?
+    public int getCurrentTime(){
+        return currentTime;
+    };
 
     public void rejected() {
         this.rejected++;

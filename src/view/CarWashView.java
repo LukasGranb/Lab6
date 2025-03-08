@@ -10,26 +10,26 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class CarWashView extends SimView {
-//    private double time;
-//    private int carId;
-//    private Event event;
-//    private MachineType fast;
-//    private MachineType slow;
-//    private double idleTime;
-//    private double QueueTime;
-//    private int queueSize;
-//    private int rejected;
 
     private CarWashState carWashState;
 
-    public CarWashView(CarWashState carWashState){
+    public CarWashView(CarWashState carWashState) {
         this.carWashState = carWashState;
         carWashState.addObserver(this);
+
+        System.out.println("Fast machines: " + carWashState.getFastMachines());
+        System.out.println("Slow machines: " + carWashState.getSlowMachines());
+        //Kommenterar ut dessa för vi har ej getFastDist metoderna osv men jag tror dock vi behöver något sånt..
+        //System.out.println("Fast distrubution: " + carWashState.getFastDist());
+        //System.out.println("Slow distrubution: " + carWashState.getSlowDist());
+        //System.out.println("Exponential distrubution with lambda = " + carWashState.getLambda());
+        //System.out.println("Seed = " + CarWashState.getSeed());
+        System.out.println("Max queue size: " + carWashState.getQueueSize());
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        if (arg instanceof CarArrives) {
+        if (arg instanceof CarArrives || arg instanceof CarLeaves) {
             CarArrives carArrivesEvent = (CarArrives) arg;
 
             // hur ska man göra typ detta-> double currentTime = carArrives.getTime();
@@ -46,15 +46,13 @@ public class CarWashView extends SimView {
                     currentTime, "Arrive " + carId, FastMachines...
             );
             System.out.print(output);
-        } else if(arg instanceof CarLeaves){
-            CarLeaves carLeavesEvent = (CarLeaves) arg;
-            //blir detta fucked? jag vill ju bara ha en print av (output).. Man måste nog göra så att
         }
 
     }
 
-    public void output(){
-        System.out.println("Total idle machinetime: " );
+
+    public void output() {
+        System.out.println("Total idle machinetime: ");
     }
 }
 
