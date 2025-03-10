@@ -23,35 +23,28 @@ public class CarArrives extends Event<CarWashState> {
     @Override
     public void execute() {
 
+        if (this.state.getFastMachines() > 0) {
+            this.state.carArrivesFastMachines();
+            eventQueue.addEvent(new CarLeaves(this.state, this.eventQueue, MachineType.FAST, this.getTime(), state.getFastMachineTime(), car.getCarId()) );
 
-        fastOrSlowMachine();
+        } else if (this.state.getSlowMachines() > 0) {
+            this.state.carArrivesSlowMachines();
+            eventQueue.addEvent(new CarLeaves(this.state, this.eventQueue, MachineType.SLOW, this.getTime(), state.getSlowMachineTime(), car.getCarId()));
 
-        if (this.state.getQueue() != 0) {
+        } else if (this.state.getQueue() != 0) {
             this.state.carArrivesQueue(this.car);
-            return;
 
+        } else {
+            this.state.rejected();
         }
-        this.state.rejected();
+
         //Tror man behöver göra något sånt här, denna syntax är såklart ej korrekt..
         // CarWashState.currentTime(this.getTime?) eller bara  = this.getTime();
 
-    }
-    // ORIGINALET
-//    public void fastOrSlowMachine() {
-//        if (this.state.getFastMachines() != 0) {
-//            this.state.carArrivesFastMachines();
-//            new CarLeaves(this.getTime(), MachineType.FAST, car.getCarId());
-//            return;
-//        }
-//
-//        if (state.getSlowMachines() != 0) {
-//            state.carArrivesSlowMachines();
-//            new CarLeaves(this.getTime(), MachineType.SLOW, car.getCarId());
-//        }
-//    }
-
+        //insåg att det bör vara > istället för != 0. då det fallet när inputen är negativ. Av någon anledning... Blir det problem
     //Antons variant >(
-    public void fastOrSlowMachine() {
+        /*
+        public void fastOrSlowMachine() {
         if (this.state.getFastMachines() != 0) {
             this.state.carArrivesFastMachines();
             new CarLeaves(this.state, this.eventQueue, this.getTime(), MachineType.FAST, car.getCarId());
@@ -61,7 +54,10 @@ public class CarArrives extends Event<CarWashState> {
         if (state.getSlowMachines() != 0) {
             state.carArrivesSlowMachines();
             new CarLeaves(this.state, this.eventQueue, this.getTime(), MachineType.SLOW, car.getCarId());
+
         }
+        */
+
     }
 
 }

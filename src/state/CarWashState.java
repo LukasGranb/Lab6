@@ -1,5 +1,7 @@
 package src.state;
 
+import jdk.jfr.EventType;
+import src.random.UniformRandomStream;
 import src.sim.SimState;
 import src.sim.SimView;
 import src.events.Car;
@@ -15,19 +17,48 @@ public class CarWashState extends SimState {
     private int rejected;
     private Queue<Car> carQueue;
     private int carNextId = 1;
-    //Think we need this aswell if i understood instructions correct.
-    private int currentTime;
+    private double carIdleTime;
+    private double machineIdleTime;
+
+    private final UniformRandomStream fastMachineTime;
+    private final UniformRandomStream slowMachineTime;
 
 
-    public CarWashState(int fastMachines, int slowMachines, int parkingLotSize, double time, SimView view) {
-        super(time, view);
+
+    public CarWashState(
+            int fastMachines,
+            double fastLower,
+            double fastUpper,
+            int slowMachines,
+            double slowLower,
+            double slowUpper,
+            int parkingLotSize,
+            double time,
+            SimView simView
+    ) {
+        super(time, simView);
         this.fastMachines = fastMachines;
         this.slowMachines = slowMachines;
         this.parkingLotSize = parkingLotSize;
         this.rejected = 0;
         this.carQueue = new LinkedList<>();
-        this.currentTime = currentTime;
+        this.fastMachineTime = new UniformRandomStream(fastLower, fastUpper);
+        this.slowMachineTime = new UniformRandomStream(slowLower, slowUpper);
     }
+    /*
+    private Type transition(EVENTTYPE) {
+        case(EVENTTYPE) {
+            switch REJECTED:
+                notifyobserver() och skicka med lämplig information
+            switch CarArrive:
+
+            //etc.....
+            // skapad enum för eventtypes
+            //sen när nått händer so kallar man bara transition(EVENTTYPE)
+        }
+    }
+
+     */
 
     public int idCounter(){
         int carId = this.carNextId;
@@ -35,13 +66,16 @@ public class CarWashState extends SimState {
         return carId;
     }
 
-    //guess we should have this too?
-    public int getCurrentTime(){
-        return currentTime;
-    };
+    @Override
+    public void advanceTime(double time) {
+        this.setTime(time);
+    }
 
     public void rejected() {
         this.rejected++;
+
+        setChanged();
+        notifyObservers(new String[]{"REJECTED", String.valueOf(lastCarId), String.valueOf(currentTime), "0.0", "0.0"});
     }
 
     public void carLeavesFastMachines() {
@@ -62,7 +96,7 @@ public class CarWashState extends SimState {
      */
 
     public void carArrivesQueue(Car car) {
-            carQueue.add(car);
+        carQueue.add(car);
     }
 
     public Car processNextFromQueue() {
@@ -81,10 +115,6 @@ public class CarWashState extends SimState {
         }
     }
 
-    public double advanceTime(double time) {
-        return time;
-    }
-
     //------- Getters --------
 
     public int getQueue() {
@@ -99,8 +129,16 @@ public class CarWashState extends SimState {
         return this.fastMachines;
     }
 
+    public double getFastMachineTime(){
+        return fastMachineTime.next();
+    }
+
     public int getSlowMachines() {
         return this.slowMachines;
+    }
+
+    public double getSlowMachineTime(){
+        return slowMachineTime.next();
     }
 
     public int getRejected() {

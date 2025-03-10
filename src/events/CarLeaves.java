@@ -6,15 +6,15 @@ import src.sim.EventQueue;
 import src.sim.SimState;
 import src.state.CarWashState;
 
-public class CarLeaves extends Event {
-    private static final UniformRandomStream fastMachineTime = new UniformRandomStream(2.0, 4.0);
-    private static final UniformRandomStream slowMachineTime = new UniformRandomStream(4.0, 8.0);
+public class CarLeaves extends Event<CarWashState> {
+
 
     private int carId;
-    private MachineType machineType;
     //do we need this aswell?
     private CarWashState state;
     private EventQueue queue;
+    private double serviceTime;
+    private MachineType machineType;
 
     // Innan anton börjar stöka var denna den vi hade.
 //    public CarLeaves(double timeEntered, MachineType machineType, int carId) {
@@ -36,29 +36,22 @@ public class CarLeaves extends Event {
     the Machinetyp argument. Pretty much assumed this because i
     took it as they're relevant in carArrives?
      */
-    public CarLeaves(CarWashState state, EventQueue queue, double timeEntered, MachineType machineType, int carId){
-        super(state, queue, timeEntered + getServiceTime(machineType));
-        this.machineType = machineType;
+    public CarLeaves(CarWashState state, EventQueue queue, MachineType machine, double timeEntered, double serviceTime, int carId){
+        super(state, queue, timeEntered + serviceTime);
         this.carId = carId;
         this.state = state;
         this.queue = queue;
+        this.machineType = machine;
     }
 
     /**
      * Calculates a random service time based on what machines it gets into
      *
-     * @param machineType
+     * @param
      * @return time between 2-4
      * @return time between 4-8
      */
 
-    private static double getServiceTime(MachineType machineType) {
-        if (machineType == MachineType.FAST) {
-            return fastMachineTime.next();
-        } else {
-            return slowMachineTime.next();
-        }
-    }
 
 //    public void execute(SimState simState, EventQueue queue) {
 //        if (machineType == MachineType.FAST) {
@@ -81,12 +74,6 @@ public class CarLeaves extends Event {
         } else if (machineType == MachineType.SLOW) {
             state.carLeavesSlowMachines();
         }
-        if (state.getQueueSize() > 0) {
-            //Här vet jag ej vad tanken är?
-            if (nextCar != null) {
-                MachineType nextMachineType = state.getLastUsedMachineType();
-                queue.add(new CarLeaves(getTime(), nextMachineType, nextCar.getCarId()));
-            }
-        }
+
     }
 }

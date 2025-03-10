@@ -14,20 +14,27 @@ public abstract class SimState extends Observable {
 
     public SimState(double time, SimView view) {
         super();
-        this.addObserver(view);this.time = time;
+        this.addObserver(view);
+        this.time = time;
         this.state = State.RUN;
 
     }
 
-    public abstract double advanceTime(double time);
+    public abstract void advanceTime(double time);
 
     public State getState() {
-
         return this.state;
     }
 
-    public void setState(State state) {
+    public double getTime() {
+        return this.time;
+    }
 
+    public void setTime(double newTime) {
+        this.time = newTime;
+    }
+
+    public void setState(State state) {
         this.state = state;
     }
 }

@@ -17,6 +17,7 @@ public class EventQueue<S extends SimState> {
 
         if(e != null) {
             e.execute();
+            this.state.advanceTime(e.getTime());
         }
         else {
             state.setState(SimState.State.STOP);
@@ -27,7 +28,7 @@ public class EventQueue<S extends SimState> {
         this.sorter.add(e);
     }
 
-    private void generateEvents(Function<Double, Event<S>> eventSupplier, double lambda, double eventSize) {
+    public void generateEvents(Function<Double, Event<S>> eventSupplier, double lambda, double eventSize) {
 
         ExponentialRandomStream stream = new ExponentialRandomStream(lambda);
 
