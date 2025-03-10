@@ -81,6 +81,8 @@ public class CarLeaves extends Event {
         } else if (machineType == MachineType.SLOW) {
             state.carLeavesSlowMachines();
         }
+
+        Car nextCar = carWashState.processNextFromQueue();
         if (state.getQueueSize() > 0) {
             //Här vet jag ej vad tanken är?
             if (nextCar != null) {
