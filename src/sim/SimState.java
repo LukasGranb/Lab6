@@ -4,19 +4,37 @@ import java.util.Observable;
 
 public abstract class SimState extends Observable {
 
-    private enum State {
-        START,
+    public enum State {
+        RUN,
         STOP;
     }
 
     private State state;
-    private double currentTime;
+    private double time;
 
     public SimState(double time, SimView view) {
         super();
-        this.currentTime = time;
-        this.state = State.START;
-
         this.addObserver(view);
+        this.time = time;
+        this.state = State.RUN;
+
+    }
+
+    public abstract void advanceTime(double time);
+
+    public State getState() {
+        return this.state;
+    }
+
+    public double getTime() {
+        return this.time;
+    }
+
+    public void setTime(double newTime) {
+        this.time = newTime;
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 }

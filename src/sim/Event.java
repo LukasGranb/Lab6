@@ -1,17 +1,28 @@
 package src.sim;
 
-import src.events.CarArrives;
-import src.events.CarLeaves;
+import src.random.ExponentialRandomStream;
 
-import java.util.Random;
-
-public abstract class Event implements Comparable<Event> {
+public abstract class Event<S extends SimState> implements Comparable<Event<S>> {
 
     private double time;
+    private S state;
+    private EventQueue eventQueue;
 
-    public Event(double time) {
+    public Event(S state, EventQueue queue, double time) {
         this.time = time;
+        this.state = state;
+        this.eventQueue = queue;
+
     }
 
     public abstract void execute();
+
+    public double getTime() {
+        return this.time;
+    }
+
+    @Override
+    public int compareTo(Event<S> other) {
+        return Double.compare(this.time, other.time);
+    }
 }

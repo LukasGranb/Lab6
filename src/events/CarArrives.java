@@ -1,19 +1,63 @@
 package src.events;
 
 import src.sim.Event;
-import src.events.Car;
+import src.sim.EventQueue;
+import src.state.CarWashState;
 
-import java.util.Random;
 
 
-public class CarArrives extends Event {
+public class CarArrives extends Event<CarWashState> {
 
     private Car car;
-    private Random random;
+    private CarWashState state;
+    private EventQueue eventQueue;
 
-    public CarArrives(double time, Car car) {
-        time = this.random;
-        id = Car.getCarId(this.car);
+
+    public CarArrives(CarWashState state, EventQueue eventQueue, double time) {
+        super(state, eventQueue, time);
+        this.car = new Car(this.state.idCounter());
+        this.state = state;
+        this.eventQueue = eventQueue;
+    }
+
+    @Override
+    public void execute() {
+
+        if (this.state.getFastMachines() > 0) {
+            this.state.carArrivesFastMachines();
+            eventQueue.addEvent(new CarLeaves(this.state, this.eventQueue, MachineType.FAST, this.getTime(), state.getFastMachineTime(), car.getCarId()) );
+
+        } else if (this.state.getSlowMachines() > 0) {
+            this.state.carArrivesSlowMachines();
+            eventQueue.addEvent(new CarLeaves(this.state, this.eventQueue, MachineType.SLOW, this.getTime(), state.getSlowMachineTime(), car.getCarId()));
+
+        } else if (this.state.getQueue() != 0) {
+            this.state.carArrivesQueue(this.car);
+
+        } else {
+            this.state.rejected();
+        }
+
+        //Tror man behöver göra något sånt här, denna syntax är såklart ej korrekt..
+        // CarWashState.currentTime(this.getTime?) eller bara  = this.getTime();
+
+        //insåg att det bör vara > istället för != 0. då det fallet när inputen är negativ. Av någon anledning... Blir det problem
+    //Antons variant >(
+        /*
+        public void fastOrSlowMachine() {
+        if (this.state.getFastMachines() != 0) {
+            this.state.carArrivesFastMachines();
+            new CarLeaves(this.state, this.eventQueue, this.getTime(), MachineType.FAST, car.getCarId());
+            return;
+        }
+
+        if (state.getSlowMachines() != 0) {
+            state.carArrivesSlowMachines();
+            new CarLeaves(this.state, this.eventQueue, this.getTime(), MachineType.SLOW, car.getCarId());
+
+        }
+        */
+
     }
 
 }
