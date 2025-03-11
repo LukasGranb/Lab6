@@ -17,6 +17,7 @@ public class CarWashState extends SimState {
     private int rejected;
     private Queue<Car> carQueue;
     private int carNextId = 1;
+    private int completedCars = 0;
     private double carIdleTime;
     private double machineIdleTime;
 
@@ -44,6 +45,7 @@ public class CarWashState extends SimState {
         this.carQueue = new LinkedList<>();
         this.fastMachineTime = new UniformRandomStream(fastLower, fastUpper);
         this.slowMachineTime = new UniformRandomStream(slowLower, slowUpper);
+        this.completedCars = completedCars;
     }
     /*
     private Type transition(EVENTTYPE) {
@@ -80,12 +82,14 @@ public class CarWashState extends SimState {
 
     public void carLeavesFastMachines() {
         this.fastMachines++;
+        this.completedCars++;
     }
     public void carArrivesFastMachines() {
         this.fastMachines--;
     }
     public void carLeavesSlowMachines() {
         this.slowMachines++;
+        this.completedCars++;
     }
     public void carArrivesSlowMachines() {
         this.slowMachines--;
@@ -143,5 +147,9 @@ public class CarWashState extends SimState {
 
     public int getRejected() {
         return this.rejected;
+    }
+
+    public int getCompletedCars() {
+        return this.completedCars;
     }
 }
