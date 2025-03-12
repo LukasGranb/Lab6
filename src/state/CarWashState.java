@@ -1,6 +1,7 @@
 package src.state;
 
 import jdk.jfr.EventType;
+import src.events.MachineType;
 import src.random.UniformRandomStream;
 import src.sim.SimState;
 import src.sim.SimView;
@@ -18,11 +19,19 @@ public class CarWashState extends SimState {
     private Queue<Car> carQueue;
     private int carNextId = 1;
     private int completedCars = 0;
-    private double carIdleTime;
-    private double machineIdleTime;
 
     private final UniformRandomStream fastMachineTime;
     private final UniformRandomStream slowMachineTime;
+
+    private double totalIdleTime = 0.0;
+    private double totalQueueTime = 0.0;
+    private double lambda;
+    private long seed;
+    private double fastLower;
+    private double fastUpper;
+    private double slowLower;
+    private double slowUpper;
+    private int lastCarId = 0;
 
 
 
@@ -35,6 +44,8 @@ public class CarWashState extends SimState {
             double slowUpper,
             int parkingLotSize,
             double time,
+            double lambda,
+            long seed,
             SimView simView
     ) {
         super(time, simView);
@@ -43,26 +54,18 @@ public class CarWashState extends SimState {
         this.parkingLotSize = parkingLotSize;
         this.rejected = 0;
         this.carQueue = new LinkedList<>();
-        this.fastMachineTime = new UniformRandomStream(fastLower, fastUpper);
-        this.slowMachineTime = new UniformRandomStream(slowLower, slowUpper);
-        this.completedCars = completedCars;
-    }
-    /*
-    private Type transition(EVENTTYPE) {
-        case(EVENTTYPE) {
-            switch REJECTED:
-                notifyobserver() och skicka med lämplig information
-            switch CarArrive:
-
-            //etc.....
-            // skapad enum för eventtypes
-            //sen när nått händer so kallar man bara transition(EVENTTYPE)
-        }
+        this.fastMachineTime = new UniformRandomStream(fastLower, fastUpper, seed);
+        this.slowMachineTime = new UniformRandomStream(slowLower, slowUpper, seed);
+        this.completedCars = 0;
+        this.lambda = lambda;
+        this.seed = seed;
+        this.fastLower = fastLower;
+        this.fastUpper = fastUpper;
+        this.slowLower = slowLower;
+        this.slowUpper = slowUpper;
     }
 
-     */
-
-    public int idCounter(){
+        public int idCounter(){
         int carId = this.carNextId;
         this.carNextId++;
         return carId;
@@ -73,34 +76,53 @@ public class CarWashState extends SimState {
         this.setTime(time);
     }
 
-    public void rejected() {
-        this.rejected++;
-
-        setChanged();
-        notifyObservers(new String[]{"REJECTED", String.valueOf(lastCarId), String.valueOf(currentTime), "0.0", "0.0"});
+    public void notifyCarEvent(String eventType, int carId, double time, double idleTime, double queueTime) {
+        String[] eventInfo = {eventType, String.valueOf(carId),
+                String.valueOf(time), String.valueOf(idleTime),
+                String.valueOf(queueTime)};
+        this.setChanged();
+        this.notifyObservers(eventInfo);
     }
 
-    public void carLeavesFastMachines() {
+    public void carArrivesFastMachines(int carId, double time) {
+        this.fastMachines--;
+        notifyCarEvent("ARRIVE", carId, time, 0, 0);
+    }
+
+    public void carArrivesSlowMachines(int carId, double time) {
+        this.slowMachines--;
+        notifyCarEvent("ARRIVE", carId, time, 0, 0);
+    }
+
+    public void rejected(int carId, double time) {
+        this.rejected++;
+        notifyCarEvent("REJECTED", carId, time, 0, 0);
+    }
+
+    public void carLeavesFastMachines(int carId, double time) {
         this.fastMachines++;
         this.completedCars++;
+        notifyCarEvent("LEAVE", carId, time, 0, 0);
     }
-    public void carArrivesFastMachines() {
-        this.fastMachines--;
-    }
-    public void carLeavesSlowMachines() {
+
+    public void carLeavesSlowMachines(int carId, double time) {
         this.slowMachines++;
         this.completedCars++;
-    }
-    public void carArrivesSlowMachines() {
-        this.slowMachines--;
+        notifyCarEvent("LEAVE", carId, time, 0, 0);
     }
 
-    /**
-     * Adds a car to the parking lot queue
-     */
+    // For simulation start and stop events
+    public void notifySimulationStart() {
+        notifyCarEvent("START", 0, this.getTime(), 0, 0);
+    }
 
-    public void carArrivesQueue(Car car) {
+    public void notifySimulationStop() {
+        notifyCarEvent("STOP", 0, this.getTime(), 0, 0);
+    }
+
+    public void carArrivesQueue(Car car, int carId, double time) {
         carQueue.add(car);
+        notifyCarEvent("ARRIVE", carId, time, 0, 0);
     }
 
     public Car processNextFromQueue() {
@@ -108,13 +130,15 @@ public class CarWashState extends SimState {
             return null;
         }
         Car nextCar = carQueue.poll();
+
         if (fastMachines > 0) {
-            carArrivesFastMachines();
+            carArrivesFastMachines(nextCar.getCarId(), this.getTime());
             return nextCar;
         } else if (slowMachines > 0) {
-            carArrivesSlowMachines();
+            carArrivesSlowMachines(nextCar.getCarId(), this.getTime());
             return nextCar;
         } else {
+            carQueue.add(nextCar);
             return null;
         }
     }
@@ -133,16 +157,16 @@ public class CarWashState extends SimState {
         return this.fastMachines;
     }
 
-    public double getFastMachineTime(){
-        return fastMachineTime.next();
-    }
-
     public int getSlowMachines() {
         return this.slowMachines;
     }
 
-    public double getSlowMachineTime(){
-        return slowMachineTime.next();
+    public double getMachineTime(MachineType machineType) {
+        if (machineType == MachineType.FAST) {
+            return fastMachineTime.next();
+        } else {
+            return slowMachineTime.next();
+        }
     }
 
     public int getRejected() {
@@ -151,5 +175,45 @@ public class CarWashState extends SimState {
 
     public int getCompletedCars() {
         return this.completedCars;
+    }
+
+    public double getIdleTime() {
+        return totalIdleTime;
+    }
+
+    public void setIdleTime(double idleTime) {
+        this.totalIdleTime = idleTime;
+    }
+
+    public double getTotalQueueTime() {
+        return totalQueueTime;
+    }
+
+    public void setTotalQueueTime(double queueTime) {
+        this.totalQueueTime = queueTime;
+    }
+
+    public double getLambda() {
+        return lambda;
+    }
+
+    public long getSeed() {
+        return seed;
+    }
+
+    public double getFastMachineLowerBound() {
+        return fastLower;
+    }
+
+    public double getFastMachineUpperBound() {
+        return fastUpper;
+    }
+
+    public double getSlowMachineLowerBound() {
+        return slowLower;
+    }
+
+    public double getSlowMachineUpperBound() {
+        return slowUpper;
     }
 }
