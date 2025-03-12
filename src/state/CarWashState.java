@@ -125,11 +125,13 @@ public class CarWashState extends SimState {
         notifyCarEvent("ARRIVE", carId, time, 0, 0);
     }
 
-    public Car processNextFromQueue() {
+    public Car processNextFromQueue(double time) {
         if (carQueue.isEmpty()) {
             return null;
         }
         Car nextCar = carQueue.poll();
+        double waitTime = this.getTime();
+        totalQueueTime += waitTime;
 
         if (fastMachines > 0) {
             carArrivesFastMachines(nextCar.getCarId(), this.getTime());

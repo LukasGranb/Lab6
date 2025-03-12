@@ -23,15 +23,18 @@ public class CarLeaves extends Event<CarWashState> {
     public void execute() {
         if (machineType == MachineType.FAST) {
             state.carLeavesFastMachines(carId, this.getTime());
+            handleQueue(MachineType.FAST);
         } else if (machineType == MachineType.SLOW) {
             state.carLeavesSlowMachines(carId, this.getTime());
+            handleQueue(MachineType.SLOW);
         }
 
-        Car nextCar = state.processNextFromQueue();
-        if (nextCar != null) {
-            MachineType assignedMachine = (state.getFastMachines() > 0) ? MachineType.FAST : MachineType.SLOW;
+    }
 
-            queue.addEvent(new CarLeaves(state, queue, assignedMachine, this.getTime(), state.getMachineTime(assignedMachine), nextCar.getCarId()));
+    private void handleQueue(MachineType machineType) {
+        Car nextCar = state.processNextFromQueue(this.getTime());
+        if (nextCar != null) {
+                queue.addEvent(new CarLeaves(state, queue, machineType, this.getTime(), state.getMachineTime(machineType), nextCar.getCarId()));
         }
     }
 }
