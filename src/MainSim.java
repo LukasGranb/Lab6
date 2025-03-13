@@ -26,7 +26,7 @@
                     cwv// SimView
             );
 
-            Simulator sim = new Simulator(carWashState, cwv);
+            Simulator sim = new Simulator(carWashState, cwv, stop);
 
             EventQueue queue = sim.getEventQueue();
             queue.addEvent(new Start(carWashState, queue, start));

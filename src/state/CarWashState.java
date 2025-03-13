@@ -8,7 +8,10 @@ import src.sim.EventQueue;
 import src.sim.SimState;
 import src.sim.SimView;
 import src.events.Car;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -17,13 +20,19 @@ import java.util.Queue;
  */
 public class CarWashState extends SimState {
 
+    public enum EventType {
+        START,
+        STOP,
+        ARRIVAL,
+        LEAVE;
+    }
 
     private int fastMachines;
     private int slowMachines;
     private int parkingLotSize;
     private int rejected;
     private Queue<Car> carQueue;
-    private int carNextId = 1;
+    private int carNextId = 0;
     private int completedCars = 0;
 
     private final UniformRandomStream fastMachineTime;
@@ -107,6 +116,8 @@ public class CarWashState extends SimState {
      */
     @Override
     public void advanceTime(double time) {
+        updateIdleTime(time);
+        updateQueueTime(time);
         this.setTime(time);
     }
 
@@ -118,10 +129,13 @@ public class CarWashState extends SimState {
      * @param idleTime
      * @param queueTime
      */
-    public void notifyCarEvent(String eventType, int carId, double time, double idleTime, double queueTime) {
-        String[] eventInfo = {eventType, String.valueOf(carId),
-                String.valueOf(time), String.valueOf(idleTime),
-                String.valueOf(queueTime)};
+    public void notifyCarEvent(EventType eventType, int carId, double time, double idleTime, double queueTime) {
+        List<Object> eventInfo = new ArrayList<>();
+        eventInfo.add(eventType);
+        eventInfo.add(carId);
+        eventInfo.add(time);
+        eventInfo.add(idleTime);
+        eventInfo.add(queueTime);
         this.setChanged();
         this.notifyObservers(eventInfo);
     }
@@ -163,7 +177,7 @@ public class CarWashState extends SimState {
     public void carLeavesFastMachines(int carId, double time) {
         this.fastMachines++;
         this.completedCars++;
-        notifyCarEvent("LEAVE", carId, time, 0, 0);
+        notifyCarEvent(EventType.LEAVE, carId, time, 0, 0);
     }
 
     /**
@@ -174,17 +188,17 @@ public class CarWashState extends SimState {
     public void carLeavesSlowMachines(int carId, double time) {
         this.slowMachines++;
         this.completedCars++;
-        notifyCarEvent("LEAVE", carId, time, 0, 0);
+        notifyCarEvent(EventType.LEAVE, carId, time, 0, 0);
     }
 
     // For simulation start and stop events
     @Override
     public void notifySimulationStart() {
-        notifyCarEvent("START", 0, this.getTime(), 0, 0);
+        notifyCarEvent(EventType.START, 0, this.getTime(), 0, 0);
     }
     @Override
     public void notifySimulationStop() {
-        notifyCarEvent("STOP", 0, this.getTime(), 0, 0);
+        notifyCarEvent(EventType.STOP, 0, this.getTime(), 0, 0);
     }
 
     /**
@@ -224,7 +238,7 @@ public class CarWashState extends SimState {
         if (this.getQueueSize() != 0) {
             double timeElapsed = time - this.getTime();
             totalQueueTime += timeElapsed * this.getQueueSize();
-            meanQueueTime = totalQueueTime / completedCars;
+            meanQueueTime = totalQueueTime / ((this.carNextId) - this.rejected);
         }
     }
 

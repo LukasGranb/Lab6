@@ -17,10 +17,10 @@ public class Simulator {
      * @param state
      * @param view
      */
-    public Simulator(SimState state, SimView view) {
+    public Simulator(SimState state, SimView view, double timeLimit) {
         this.state = state;
         this.view = view;
-        this.eventQueue = new EventQueue(this.state, 15);
+        this.eventQueue = new EventQueue(this.state, timeLimit);
     }
 
     /**
