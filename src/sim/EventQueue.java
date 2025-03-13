@@ -1,43 +1,48 @@
-package src.sim;
+    package src.sim;
 
-import src.random.ExponentialRandomStream;
-import java.util.function.Function;
-public class EventQueue<S extends SimState> {
+    import src.random.ExponentialRandomStream;
+    import java.util.function.Function;
+    public class EventQueue<S extends SimState> {
 
-    private S state;
-    private SortedSequence sorter;
+        private SimState state;
+        private SortedSequence sorter;
+        private double timeLimit;
+        private double lambda;
+        ExponentialRandomStream stream;
 
-    public EventQueue(S state) {
-        this.state = state;
-        this.sorter = new SortedSequence();
-    }
-
-    public void nextEvent() {
-        Event e = this.sorter.get();
-
-        if(e != null) {
-            e.execute();
-            this.state.advanceTime(e.getTime());
+        public EventQueue(SimState state, double timeLimit) {
+            this.state = state;
+            this.sorter = new SortedSequence();
+            this.timeLimit = timeLimit;
+            this.lambda = state.getLambda();
+            ExponentialRandomStream stream = new ExponentialRandomStream(lambda);
         }
-        else {
-            state.setState(SimState.State.STOP);
+
+        public void nextEvent() {
+            Event e = this.sorter.get();
+
+            if(e != null) {
+                if(e.getTime() > timeLimit) {
+                    state.setState(SimState.State.STOP);
+                }
+                e.execute();
+                this.state.advanceTime(e.getTime());
+            }
         }
-    }
 
-    public void addEvent(Event e) {
-        this.sorter.add(e);
-    }
-
-    public void generateEvents(Function<Double, Event<S>> eventSupplier, double lambda, double eventSize) {
-
-        ExponentialRandomStream stream = new ExponentialRandomStream(lambda);
-
-        for(int i = 0; i < eventSize; i++) {
-            double eventTime = stream.next();
-            Event<S> e = eventSupplier.apply(eventTime);
-            this.addEvent(e);
-
+        public void addEvent(Event e) {
+            this.sorter.add(e);
         }
-    }
 
-}
+        // If you want to generate a set of future events, unused for now.
+        public void generateEvents(Function<Double, Event<S>> eventSupplier, double lambda) {
+
+            if(state.getTime() >= timeLimit) {
+                double eventTime = stream.next();
+                Event<S> e = eventSupplier.apply(eventTime);
+                this.addEvent(e);
+
+            }
+        }
+
+    }

@@ -20,7 +20,13 @@ public abstract class SimState extends Observable {
 
     }
 
+    public abstract double getLambda();
+
     public abstract void advanceTime(double time);
+
+    public abstract void notifySimulationStart();
+
+    public abstract void notifySimulationStop();
 
     public State getState() {
         return this.state;

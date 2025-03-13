@@ -11,12 +11,14 @@ public class Simulator {
     public Simulator(SimState state, SimView view) {
         this.state = state;
         this.view = view;
-        this.eventQueue = new EventQueue(this.state);
+        this.eventQueue = new EventQueue(this.state, 15);
     }
 
     public void run() {
+        state.notifySimulationStart();
         while(this.state.getState() == State.RUN) {
             eventQueue.nextEvent();
         }
+        state.notifySimulationStop();
     }
 }

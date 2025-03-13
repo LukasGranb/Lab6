@@ -1,10 +1,13 @@
 package src.events;
 
 public class Car {
-    // om jag fatta det rätt ska detta alltid börja på noll.
-    private int id = 0;
+    private int id;
 
     public Car(int id){
+        this.id = id;
+    }
+
+    public void setCarId(int id) {
         this.id = id;
     }
 

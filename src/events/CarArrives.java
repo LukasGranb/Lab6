@@ -1,5 +1,6 @@
 package src.events;
 
+import src.random.ExponentialRandomStream;
 import src.sim.Event;
 import src.sim.EventQueue;
 import src.state.CarWashState;
@@ -13,51 +14,40 @@ public class CarArrives extends Event<CarWashState> {
     private EventQueue eventQueue;
 
 
+
+
     public CarArrives(CarWashState state, EventQueue eventQueue, double time) {
         super(state, eventQueue, time);
-        this.car = new Car(this.state.idCounter());
         this.state = state;
         this.eventQueue = eventQueue;
+
     }
 
     @Override
     public void execute() {
 
+        eventQueue.addEvent(new CarArrives(this.state, this.eventQueue, this.state.getTimeSpread()));
+
         if (this.state.getFastMachines() > 0) {
-            this.state.carArrivesFastMachines();
-            eventQueue.addEvent(new CarLeaves(this.state, this.eventQueue, MachineType.FAST, this.getTime(), state.getFastMachineTime(), car.getCarId()) );
+            this.car = new Car(this.state.idCounter());
+            this.state.carArrivesFastMachines(car.getCarId(), this.getTime());
+            this.state.notifyCarEvent("ARRIVE", car.getCarId(), this.getTime(), 0, 0);
+            eventQueue.addEvent(new CarLeaves(this.state, this.eventQueue, MachineType.FAST, this.getTime(), state.getMachineTime(MachineType.FAST), car.getCarId()) );
 
         } else if (this.state.getSlowMachines() > 0) {
-            this.state.carArrivesSlowMachines();
-            eventQueue.addEvent(new CarLeaves(this.state, this.eventQueue, MachineType.SLOW, this.getTime(), state.getSlowMachineTime(), car.getCarId()));
+            this.car = new Car(this.state.idCounter());
+            this.state.carArrivesSlowMachines(car.getCarId(), this.getTime());
+            this.state.notifyCarEvent("ARRIVE", car.getCarId(), this.getTime(), 0, 0);
+            eventQueue.addEvent(new CarLeaves(this.state, this.eventQueue, MachineType.SLOW, this.getTime(), state.getMachineTime(MachineType.SLOW), car.getCarId()));
 
-        } else if (this.state.getQueue() != 0) {
-            this.state.carArrivesQueue(this.car);
+        } else if (this.state.getQueue() > 0) {
+            this.car = new Car(this.state.idCounter());
+            this.state.carArrivesQueue(this.car, car.getCarId(), this.getTime());
+            this.state.notifyCarEvent("ARRIVE", car.getCarId(), this.getTime(), 0, 0);
 
         } else {
             this.state.rejected();
         }
-
-        //Tror man behöver göra något sånt här, denna syntax är såklart ej korrekt..
-        // CarWashState.currentTime(this.getTime?) eller bara  = this.getTime();
-
-        //insåg att det bör vara > istället för != 0. då det fallet när inputen är negativ. Av någon anledning... Blir det problem
-    //Antons variant >(
-        /*
-        public void fastOrSlowMachine() {
-        if (this.state.getFastMachines() != 0) {
-            this.state.carArrivesFastMachines();
-            new CarLeaves(this.state, this.eventQueue, this.getTime(), MachineType.FAST, car.getCarId());
-            return;
-        }
-
-        if (state.getSlowMachines() != 0) {
-            state.carArrivesSlowMachines();
-            new CarLeaves(this.state, this.eventQueue, this.getTime(), MachineType.SLOW, car.getCarId());
-
-        }
-        */
-
     }
 
 }
