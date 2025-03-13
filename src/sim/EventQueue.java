@@ -32,8 +32,10 @@
             Event e = this.sorter.get();
 
             if(e != null) {
-                e.execute();
+
                 this.state.advanceTime(e.getTime());
+                e.execute();
+
             }
         }
 

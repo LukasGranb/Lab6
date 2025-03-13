@@ -14,15 +14,15 @@
 
             CarWashState carWashState = new CarWashState(
                     2, // fastMachines
-                    2.0, // fastLower
-                    4.0, // fastUpper
+                    2.8, // fastLower
+                    4.6, // fastUpper
                     2, // slowMachines
-                    3.0, // slowLower
-                    5.0, // slowUpper
+                    3.5, // slowLower
+                    6.7, // slowUpper
                     5, // parkingLotSize
                     0.0, // initial time
-                    2, // lambda
-                    123456789L, // seed
+                    2.0, // lambda
+                    1234, // seed
                     cwv// SimView
             );
 
