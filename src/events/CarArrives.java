@@ -26,28 +26,23 @@ public class CarArrives extends Event<CarWashState> {
     @Override
     public void execute() {
 
-        eventQueue.addEvent(new CarArrives(this.state, this.eventQueue, this.state.getTimeSpread()));
-
         if (this.state.getFastMachines() > 0) {
             this.car = new Car(this.state.idCounter());
-            this.state.carArrivesFastMachines(car.getCarId(), this.getTime());
-            this.state.notifyCarEvent("ARRIVE", car.getCarId(), this.getTime(), 0, 0);
-            eventQueue.addEvent(new CarLeaves(this.state, this.eventQueue, MachineType.FAST, this.getTime(), state.getMachineTime(MachineType.FAST), car.getCarId()) );
-
+            this.state.carArrivesFastMachines(car, this.getTime(), this.eventQueue);
+            this.state.notifyCarEvent("ARRIVE", car.getCarId(), this.getTime(), state.getIdleTime(), state.getTotalQueueTime());
         } else if (this.state.getSlowMachines() > 0) {
             this.car = new Car(this.state.idCounter());
-            this.state.carArrivesSlowMachines(car.getCarId(), this.getTime());
-            this.state.notifyCarEvent("ARRIVE", car.getCarId(), this.getTime(), 0, 0);
-            eventQueue.addEvent(new CarLeaves(this.state, this.eventQueue, MachineType.SLOW, this.getTime(), state.getMachineTime(MachineType.SLOW), car.getCarId()));
-
+            this.state.carArrivesSlowMachines(car, this.getTime(), this.eventQueue);
+            this.state.notifyCarEvent("ARRIVE", car.getCarId(), this.getTime(), state.getIdleTime(), state.getTotalQueueTime());
         } else if (this.state.getQueue() > 0) {
             this.car = new Car(this.state.idCounter());
             this.state.carArrivesQueue(this.car, car.getCarId(), this.getTime());
-            this.state.notifyCarEvent("ARRIVE", car.getCarId(), this.getTime(), 0, 0);
-
+            this.state.notifyCarEvent("ARRIVE", car.getCarId(), this.getTime(), state.getIdleTime(), state.getTotalQueueTime());
         } else {
             this.state.rejected();
         }
+        eventQueue.addEvent(new CarArrives(this.state, this.eventQueue, this.state.getTimeSpread()));
+        this.state.updateIdleTime(this.getTime());
+        this.state.updateQueueTime(this.getTime());
     }
-
 }
