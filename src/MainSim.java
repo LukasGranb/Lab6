@@ -2,7 +2,6 @@
     import src.events.Start;
     import src.events.Stop;
     import src.sim.EventQueue;
-    import src.sim.SimState;
     import src.sim.Simulator;
     import src.state.CarWashState;
     import src.view.CarWashView;
@@ -26,7 +25,7 @@
                     cwv// SimView
             );
 
-            Simulator sim = new Simulator(carWashState, cwv);
+            Simulator sim = new Simulator(carWashState, cwv, stop);
 
             EventQueue queue = sim.getEventQueue();
             queue.addEvent(new Start(carWashState, queue, start));

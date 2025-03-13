@@ -4,7 +4,14 @@ import src.sim.SimView;
 import src.state.CarWashState;
 
 import java.util.Formatter;
+import java.util.List;
 import java.util.Observable;
+
+/**
+ * @author Lukas Granberg, Amund Knutsson
+ * CarWashView uses formatter to creates the strings to be printed
+ * extends SimView
+ */
 
 public class CarWashView extends SimView {
 
@@ -12,9 +19,17 @@ public class CarWashView extends SimView {
     //Used to check if the header is printed
     private boolean headerPrinted = false;
 
+    /**
+     * Constructor that creates a new Formatter object
+     */
+
     public CarWashView() {
         this.formatter = new Formatter();
     }
+
+    /**
+     * Ouput prints the current string and resets the formatter
+     */
 
     @Override
     public void output() {
@@ -23,6 +38,16 @@ public class CarWashView extends SimView {
         this.formatter = new Formatter();  // Reset buffer to prevent duplicate printing
     }
 
+    /**
+     * Formats the determined configuration made at the creation of a Simluator instance
+     * @param state
+     * @param fastMachineMinTime
+     * @param fastMachineMaxTime
+     * @param slowMachineMinTime
+     * @param slowMachineMaxTime
+     * @param lambda
+     * @param seed
+     */
 
     public void printConfiguration(CarWashState state, double fastMachineMinTime, double fastMachineMaxTime, double slowMachineMinTime, double slowMachineMaxTime, double lambda, long seed) {
         formatter.format("Fast Machines: %d\n", state.getFastMachines());
@@ -31,11 +56,15 @@ public class CarWashView extends SimView {
         formatter.format("Slow Machine Time Distrubution: %.1f, %.1f\n", slowMachineMinTime, slowMachineMaxTime);
         formatter.format("Lambda: %.1f\n", lambda);
         formatter.format("Seed %d\n", seed);
-        formatter.format("Max Queue Size: %d\n", state.getQueueSize());
+        formatter.format("Max Queue Size: %d\n", state.getParkingLotSize());
         formatter.format("--------------------------------\n");
 
         printHeader();
     }
+
+    /**
+     * Formats a header and turn headerPrinted = true to track that it has been printed
+     */
 
     public void printHeader() {
         formatter.format("%-6s %-10s %-3s %-5s %-5s %-9s %-10s %-10s %-8s\n",
@@ -44,9 +73,11 @@ public class CarWashView extends SimView {
         headerPrinted = true;
     }
 
-    //Det som printas när simulatorn körts klart
-    //Fattar ej hur ni har implementerat CarWashState state, Känner mig lite trög men tror ni fattar koden så kanske ni kan lösa det
-    // detta går att skriva om men tror det kan vara smart att hålla reda på idletime och total queue time i carwashstate
+    /**
+     *Prints the result after the simulation is done
+     * @param state
+     */
+
     public void printResults(CarWashState state) {
         formatter.format("---------------------------------\n");
         formatter.format("Total idle machine time: %.2f\n", state.getIdleTime());
@@ -55,7 +86,7 @@ public class CarWashView extends SimView {
         int totalCarsServed = state.getCompletedCars();
         if (totalCarsServed > 0) {
             formatter.format("Mean queueing time: %.2f\n",
-                    state.getTotalQueueTime() / totalCarsServed);
+                    state.getMeanQueueTime());
         } else {
             formatter.format("No cars served\n");
         }
@@ -63,17 +94,18 @@ public class CarWashView extends SimView {
         formatter.format("Rejected cars: %d\n", state.getRejected());
     }
 
-    public void updateStatistics(CarWashState state, String eventType, int carId, double idleTime, double queueTime) {
-        state.setIdleTime(state.getIdleTime() + idleTime);
-        state.setTotalQueueTime(state.getTotalQueueTime() + queueTime);
-    }
+    /**
+     * Updates the formatter when notifyed
+     * @param o     the observable object.
+     * @param arg   an argument passed to the {@code notifyObservers}
+     *                 method.
+     */
 
     @Override
     public void update(Observable o, Object arg) {
         CarWashState state = (CarWashState) o;
 
         if (!headerPrinted) {
-            // skapa getter för dessa?
             printConfiguration(state,
                     state.getFastMachineLowerBound(),
                     state.getFastMachineUpperBound(),
@@ -83,28 +115,24 @@ public class CarWashView extends SimView {
                     state.getSeed());
         }
 
-        if (arg != null && arg instanceof String[]) {
-            String[] eventInfo = (String[]) arg;
-            String eventType = eventInfo[0];
-            int carId = Integer.parseInt(eventInfo[1]);
-            double time = Double.parseDouble(eventInfo[2]);
-            double idleTime = Double.parseDouble(eventInfo[3]);
-            double queueTime = Double.parseDouble(eventInfo[4]);
+        if (arg != null) {
+            List eventInfo = (List) arg;
+            CarWashState.EventType eventType = (CarWashState.EventType) eventInfo.get(0);
+            int carId = (int) eventInfo.get(1);
+            double time = (double) eventInfo.get(2);
 
-            updateStatistics(state, eventType, carId, idleTime, queueTime);
-
-            if (eventType.equals("START")) {
+            if (eventType == CarWashState.EventType.START) { // start
                 formatter.format("%-6.2f %-10s\n", time, "Start");
-            } else if (eventType.equals("STOP")) {
+            } else if (eventType == CarWashState.EventType.STOP) { //stop
                 formatter.format("%-6.2f %-10s\n", time, "Stop");
                 printResults(state);
-            } else if (eventType.equals("ARRIVE")) {
+            } else if (eventType == CarWashState.EventType.ARRIVAL) { // arrive
                 formatter.format("%-6.2f %-10s %-3d %-5d %-5d %-9.2f %-10.2f %-10d %-8d\n",
                         time, "Arrive", carId,
                         state.getFastMachines(), state.getSlowMachines(),
                         state.getIdleTime(), state.getTotalQueueTime(),
                         state.getQueueSize(), state.getRejected());
-            } else if (eventType.equals("LEAVE")) {
+            } else if (eventType == CarWashState.EventType.LEAVE) { // leave
                 formatter.format("%-6.2f %-10s %-3d %-5d %-5d %-9.2f %-10.2f %-10d %-8d\n",
                         time, "Leave", carId,
                         state.getFastMachines(), state.getSlowMachines(),

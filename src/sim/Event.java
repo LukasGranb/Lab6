@@ -1,7 +1,5 @@
 package src.sim;
 
-import src.random.ExponentialRandomStream;
-
 public abstract class Event<S extends SimState> implements Comparable<Event<S>> {
 
     private double time;
