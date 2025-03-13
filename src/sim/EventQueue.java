@@ -4,23 +4,29 @@
     import java.util.function.Function;
     public class EventQueue<S extends SimState> {
 
-        private S state;
+        private SimState state;
         private SortedSequence sorter;
+        private double timeLimit;
+        private double lambda;
+        ExponentialRandomStream stream;
 
-        public EventQueue(S state) {
+        public EventQueue(SimState state, double timeLimit) {
             this.state = state;
             this.sorter = new SortedSequence();
+            this.timeLimit = timeLimit;
+            this.lambda = state.getLambda();
+            ExponentialRandomStream stream = new ExponentialRandomStream(lambda);
         }
 
         public void nextEvent() {
             Event e = this.sorter.get();
 
             if(e != null) {
+                if(e.getTime() > timeLimit) {
+                    state.setState(SimState.State.STOP);
+                }
                 e.execute();
                 this.state.advanceTime(e.getTime());
-            }
-            else {
-                state.setState(SimState.State.STOP);
             }
         }
 
@@ -28,11 +34,10 @@
             this.sorter.add(e);
         }
 
-        public void generateEvents(Function<Double, Event<S>> eventSupplier, double lambda, double eventSize) {
+        // If you want to generate a set of future events, unused for now.
+        public void generateEvents(Function<Double, Event<S>> eventSupplier, double lambda) {
 
-            ExponentialRandomStream stream = new ExponentialRandomStream(lambda);
-
-            for(int i = 0; i < eventSize; i++) {
+            if(state.getTime() >= timeLimit) {
                 double eventTime = stream.next();
                 Event<S> e = eventSupplier.apply(eventTime);
                 this.addEvent(e);

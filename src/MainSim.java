@@ -1,15 +1,19 @@
     package src;
+    import src.events.Car;
     import src.events.CarArrives;
+    import src.random.ExponentialRandomStream;
     import src.sim.EventQueue;
     import src.sim.SimState;
+    import src.sim.Simulator;
     import src.state.CarWashState;
     import src.view.CarWashView;
 
 
     public class MainSim {
 
-        public static void main(String[] args) {
-            CarWashView view = new CarWashView();
+        public static void Simulator1() {
+            CarWashView cwv = new CarWashView();
+
             CarWashState carWashState = new CarWashState(
                     2, // fastMachines
                     2.0, // fastLower
@@ -21,24 +25,23 @@
                     0.0, // initial time
                     0.5, // lambda
                     123456789L, // seed
-                    view // SimView
+                    cwv// SimView
             );
 
-            // Notify the start of simulation
-            carWashState.notifySimulationStart();
+            Simulator sim = new Simulator(carWashState, cwv);
 
-            EventQueue<CarWashState> queue = new EventQueue<>(carWashState);
+            sim.run();
 
-            // Generate car arrival events
-            queue.generateEvents(eventTime -> new CarArrives(carWashState, queue, eventTime), 0.5, 15);
 
-            // Run simulation
-            while(carWashState.getState() == SimState.State.RUN) {
-                queue.nextEvent();
-            }
 
-            // Notify the end of simulation
-            carWashState.notifySimulationStop();
+
+        }
+
+        public static void main(String[] args) {
+
+            Simulator1();
+
+
         }
 
     }

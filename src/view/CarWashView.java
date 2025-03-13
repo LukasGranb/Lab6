@@ -110,12 +110,6 @@ public class CarWashView extends SimView {
                         state.getFastMachines(), state.getSlowMachines(),
                         state.getIdleTime(), state.getTotalQueueTime(),
                         state.getQueueSize(), state.getRejected());
-            } else if (eventType.equals("REJECTED")) {
-                formatter.format("%-6.2f %-10s %-3d %-5d %-5d %-9.2f %-10.2f %-10d %-8d\n",
-                        time, "Rejected", carId,
-                        state.getFastMachines(), state.getSlowMachines(),
-                        state.getIdleTime(), state.getTotalQueueTime(),
-                        state.getQueueSize(), state.getRejected());
             }
         }
         output();
